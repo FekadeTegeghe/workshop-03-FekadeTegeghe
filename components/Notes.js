@@ -7,15 +7,16 @@ import {
   Button,
   View,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+// import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import GlobalContext from "./GlobalContext";
 import Badge from "components/Badge";
 import Separator from "components/Separator";
 
 function Notes({ route }) {
-  const userData = route.params.userData;
+  //const userData = route.params.userData;
   const [userNotes, setuserNotes] = React.useState({ notes: [], note: "" });
-
+  const context = React.useContext(GlobalContext);
+  const user = context.user;
   const inputChange = (text) => {
     setuserNotes({ ...userNotes, note: text });
   };

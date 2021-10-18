@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   ScrollView,
@@ -10,9 +10,12 @@ import {
 
 import Badge from "components/Badge";
 import Separator from "components/Separator";
-import WebView from "./WebViews";
+//import WebView from "./WebViews";
+import GlobalContext from "./GlobalContext";
 
 function Repositories({ navigation, route }) {
+  const context = React.useContext(GlobalContext);
+  const user = context.user;
   const [repoState, setRepoState] = React.useState({
     list: [],
     loading: true,
@@ -22,28 +25,26 @@ function Repositories({ navigation, route }) {
   React.useEffect(() => {
     fetchRepo();
   }, []);
+}
 
-  const userData = route.params.userData;
-  const fetchRepo = async () => {
-    const response = await fetch(userData.repos_url, {
-      method: "get",
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        setTimeout(() => {
-          setRepoState({
-            ...repoState,
-            list: result,
-            loading: false,
-            error: false,
-          });
-        }, 1000);
-      })
-      .catch((err) => {
-        setTimeout(() => {
-          setRepoState({ ...repoState, error: true, loading: false });
-        }, 2000);
-      });
+const userData = route.params.userData;
+const fetchRepo = async () => {
+  if (context.repos.length === 0) {
+    const rawResponse = await fetch(use.repos_url);
+    const jsonResponse = await rawResponse.json();
+    context.setRepos(jsonResponse);
+    storeData(STORAGE.KEY + user.login, {
+      user: context.user,
+      repos: jsonResponse,
+    });
+  } else {
+    console.log(context.repos);
+  }
+  useEffect(() => {
+    fetchRepos();
+  }, []);
+  const goToRepo = () => {
+    navigate("WebView", { url });
   };
   return (
     <View style={styles.container}>
@@ -78,7 +79,7 @@ function Repositories({ navigation, route }) {
       </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
